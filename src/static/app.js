@@ -35,6 +35,13 @@ document.addEventListener("DOMContentLoaded", () => {
     technology: { label: "Technology", color: "#e8eaf6", textColor: "#3949ab" },
   };
 
+  // Difficulty level colors
+  const difficultyColors = {
+    "Beginner": { bg: "#e8f5e9", text: "#2e7d32" },
+    "Intermediate": { bg: "#fff3e0", text: "#e65100" },
+    "Advanced": { bg: "#ffebee", text: "#c62828" }
+  };
+
   // State for activities and filters
   let allActivities = {};
   let currentFilter = "all";
@@ -514,12 +521,6 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
 
     // Create difficulty badge (only if difficulty is specified)
-    const difficultyColors = {
-      "Beginner": { bg: "#e8f5e9", text: "#2e7d32" },
-      "Intermediate": { bg: "#fff3e0", text: "#e65100" },
-      "Advanced": { bg: "#ffebee", text: "#c62828" }
-    };
-    
     let difficultyBadge = "";
     if (details.difficulty && difficultyColors[details.difficulty]) {
       const colors = difficultyColors[details.difficulty];
