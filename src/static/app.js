@@ -331,7 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const activityUrl = `${baseUrl}#${activityAnchor}`;
     const shareText = `${name} at ${schoolName}: ${details.description} (${formattedSchedule})`;
     const encodedUrl = encodeURIComponent(activityUrl);
-    const encodedText = encodeURIComponent(shareText);
+    const encodedXText = encodeURIComponent(`${shareText} ${activityUrl}`);
     const emailSubject = encodeURIComponent(`Check out ${name}`);
     const emailBody = encodeURIComponent(
       `${shareText}\n\nView details: ${activityUrl}`
@@ -343,10 +343,10 @@ document.addEventListener("DOMContentLoaded", () => {
         <a class="share-button share-email" href="mailto:?subject=${emailSubject}&body=${emailBody}" aria-label="Share activity via email">
           Email
         </a>
-        <a class="share-button share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}" target="_blank" rel="noopener noreferrer" aria-label="Share activity on Facebook">
+        <a class="share-button share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}" target="_blank" rel="noopener noreferrer" aria-label="Share activity on Facebook">
           Facebook
         </a>
-        <a class="share-button share-x" href="https://x.com/intent/post?text=${encodedText}&url=${encodedUrl}" target="_blank" rel="noopener noreferrer" aria-label="Share activity on X">
+        <a class="share-button share-x" href="https://x.com/intent/post?text=${encodedXText}" target="_blank" rel="noopener noreferrer" aria-label="Share activity on X">
           X
         </a>
       </div>
