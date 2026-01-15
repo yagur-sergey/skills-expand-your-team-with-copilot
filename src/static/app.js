@@ -37,6 +37,8 @@ document.addEventListener("DOMContentLoaded", () => {
       document.body.classList.add("dark-mode");
       darkModeIcon.textContent = "☀️";
     } else {
+      // Default to light mode if not set or if disabled
+      document.body.classList.remove("dark-mode");
       darkModeIcon.textContent = "🌙";
     }
   }
