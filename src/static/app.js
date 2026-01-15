@@ -34,6 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
     technology: { label: "Technology", color: "#e8eaf6", textColor: "#3949ab" },
   };
   const schoolName = "Mergington High School";
+  const anchorHashMultiplier = 31;
+  const anchorHashModulus = 1000000;
 
   // State for activities and filters
   let allActivities = {};
@@ -317,7 +319,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let hash = 0;
     for (const char of trimmedName) {
-      hash = (hash * 31 + char.charCodeAt(0)) % 1000000;
+      hash =
+        (hash * anchorHashMultiplier + char.charCodeAt(0)) %
+        anchorHashModulus;
     }
     return `activity-${hash}`;
   }
