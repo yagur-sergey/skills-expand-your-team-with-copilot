@@ -30,6 +30,14 @@
   --error-light: #ffebee;
   --info: #0c5460;
   --info-light: #d1ecf1;
+
+  /* Social share colors */
+  --share-facebook-bg: #e3f2fd;
+  --share-facebook-text: #1565c0;
+  --share-facebook-border: #bbdefb;
+  --share-x-bg: #f5f5f5;
+  --share-x-text: #111111;
+  --share-x-border: #e0e0e0;
 }
 
 * {
@@ -305,15 +313,15 @@ section h3 {
 }
 
 .share-button.share-facebook {
-  background-color: #e3f2fd;
-  color: #1565c0;
-  border-color: #bbdefb;
+  background-color: var(--share-facebook-bg);
+  color: var(--share-facebook-text);
+  border-color: var(--share-facebook-border);
 }
 
 .share-button.share-x {
-  background-color: #f5f5f5;
-  color: #111111;
-  border-color: #e0e0e0;
+  background-color: var(--share-x-bg);
+  color: var(--share-x-text);
+  border-color: var(--share-x-border);
 }
 
 /* Buttons */

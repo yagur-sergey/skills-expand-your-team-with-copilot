@@ -317,7 +317,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let hash = 0;
     for (const char of trimmedName) {
-      hash = (hash + char.charCodeAt(0)) % 100000;
+      hash = (hash * 31 + char.charCodeAt(0)) % 1000000;
     }
     return `activity-${hash}`;
   }
