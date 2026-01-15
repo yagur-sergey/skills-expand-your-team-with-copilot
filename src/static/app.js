@@ -33,6 +33,12 @@ document.addEventListener("DOMContentLoaded", () => {
     community: { label: "Community", color: "#fff3e0", textColor: "#e65100" },
     technology: { label: "Technology", color: "#e8eaf6", textColor: "#3949ab" },
   };
+  const shareConfig = {
+    schoolName: "Mergington High School",
+    anchorHashMultiplier: 31,
+    anchorHashModulus: 1000000,
+    xTextLimit: 240,
+  };
 
   // State for activities and filters
   let allActivities = {};
@@ -304,6 +310,67 @@ document.addEventListener("DOMContentLoaded", () => {
     return details.schedule;
   }
 
+  function createActivityAnchor(name) {
+    const trimmedName = name.trim();
+    const slug = trimmedName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+    if (slug.length > 0) {
+      return slug;
+    }
+
+    let hash = 0;
+    for (const char of trimmedName) {
+      hash =
+        (hash * shareConfig.anchorHashMultiplier + char.charCodeAt(0)) %
+        shareConfig.anchorHashModulus;
+    }
+    return `activity-${hash}`;
+  }
+
+  function truncateText(text, maxLength) {
+    if (maxLength <= 0) {
+      return "";
+    }
+    if (text.length <= maxLength) {
+      return text;
+    }
+    return `${text.slice(0, maxLength - 1)}…`;
+  }
+
+  function buildShareLinks(name, details, formattedSchedule, activityAnchor) {
+    const baseUrl = `${window.location.origin}${window.location.pathname}`;
+    const activityUrl = `${baseUrl}#${activityAnchor}`;
+    const shareText = `${name} at ${shareConfig.schoolName}: ${details.description} (${formattedSchedule})`;
+    const encodedUrl = encodeURIComponent(activityUrl);
+    const xTextLimit = shareConfig.xTextLimit - activityUrl.length - 3;
+    const truncatedShareText = truncateText(shareText, xTextLimit);
+    const xSeparator = truncatedShareText ? " - " : "";
+    const encodedXText = encodeURIComponent(
+      `${truncatedShareText}${xSeparator}${activityUrl}`
+    );
+    const emailSubject = encodeURIComponent(`Check out ${name}`);
+    const emailBody = encodeURIComponent(
+      `${shareText}\n\nView details: ${activityUrl}`
+    );
+
+    return `
+      <div class="share-buttons">
+        <span class="share-label">Share:</span>
+        <a class="share-button share-email" href="mailto:?subject=${emailSubject}&body=${emailBody}" aria-label="Share activity via email">
+          Email
+        </a>
+        <a class="share-button share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}" target="_blank" rel="noopener noreferrer" aria-label="Share activity on Facebook">
+          Facebook
+        </a>
+        <a class="share-button share-x" href="https://x.com/intent/post?text=${encodedXText}" target="_blank" rel="noopener noreferrer" aria-label="Share activity on X">
+          X
+        </a>
+      </div>
+    `;
+  }
+
   // Function to determine activity type (this would ideally come from backend)
   function getActivityType(activityName, description) {
     const name = activityName.toLowerCase();
@@ -498,6 +565,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
+    const activityAnchor = createActivityAnchor(name);
+    activityCard.id = activityAnchor;
+    const shareLinks = buildShareLinks(
+      name,
+      details,
+      formattedSchedule,
+      activityAnchor
+    );
 
     // Create activity tag
     const tagHtml = `
@@ -528,6 +603,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="tooltip-text">Regular meetings at this time throughout the semester</span>
       </p>
       ${capacityIndicator}
+      ${shareLinks}
       <div class="participants-list">
         <h5>Current Participants:</h5>
         <ul>
