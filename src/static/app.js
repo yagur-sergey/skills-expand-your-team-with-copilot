@@ -33,9 +33,12 @@ document.addEventListener("DOMContentLoaded", () => {
     community: { label: "Community", color: "#fff3e0", textColor: "#e65100" },
     technology: { label: "Technology", color: "#e8eaf6", textColor: "#3949ab" },
   };
-  const schoolName = "Mergington High School";
-  const anchorHashMultiplier = 31;
-  const anchorHashModulus = 1000000;
+  const shareConfig = {
+    schoolName: "Mergington High School",
+    anchorHashMultiplier: 31,
+    anchorHashModulus: 1000000,
+    xTextLimit: 240,
+  };
 
   // State for activities and filters
   let allActivities = {};
@@ -320,18 +323,33 @@ document.addEventListener("DOMContentLoaded", () => {
     let hash = 0;
     for (const char of trimmedName) {
       hash =
-        (hash * anchorHashMultiplier + char.charCodeAt(0)) %
-        anchorHashModulus;
+        (hash * shareConfig.anchorHashMultiplier + char.charCodeAt(0)) %
+        shareConfig.anchorHashModulus;
     }
     return `activity-${hash}`;
+  }
+
+  function truncateText(text, maxLength) {
+    if (maxLength <= 0) {
+      return "";
+    }
+    if (text.length <= maxLength) {
+      return text;
+    }
+    return `${text.slice(0, maxLength - 1)}…`;
   }
 
   function buildShareLinks(name, details, formattedSchedule, activityAnchor) {
     const baseUrl = `${window.location.origin}${window.location.pathname}`;
     const activityUrl = `${baseUrl}#${activityAnchor}`;
-    const shareText = `${name} at ${schoolName}: ${details.description} (${formattedSchedule})`;
+    const shareText = `${name} at ${shareConfig.schoolName}: ${details.description} (${formattedSchedule})`;
     const encodedUrl = encodeURIComponent(activityUrl);
-    const encodedXText = encodeURIComponent(`${shareText} - ${activityUrl}`);
+    const xTextLimit = shareConfig.xTextLimit - activityUrl.length - 3;
+    const truncatedShareText = truncateText(shareText, xTextLimit);
+    const xSeparator = truncatedShareText ? " - " : "";
+    const encodedXText = encodeURIComponent(
+      `${truncatedShareText}${xSeparator}${activityUrl}`
+    );
     const emailSubject = encodeURIComponent(`Check out ${name}`);
     const emailBody = encodeURIComponent(
       `${shareText}\n\nView details: ${activityUrl}`
