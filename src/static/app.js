@@ -304,9 +304,18 @@ document.addEventListener("DOMContentLoaded", () => {
     return details.schedule;
   }
 
-  function buildShareLinks(name, details, formattedSchedule) {
+  function createActivityAnchor(name) {
+    const slug = name
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+    return slug || encodeURIComponent(name.trim());
+  }
+
+  function buildShareLinks(name, details, formattedSchedule, activityAnchor) {
     const baseUrl = `${window.location.origin}${window.location.pathname}`;
-    const activityUrl = `${baseUrl}#${encodeURIComponent(name)}`;
+    const activityUrl = `${baseUrl}#${activityAnchor}`;
     const shareText = `${name} at Mergington High School: ${details.description} (${formattedSchedule})`;
     const encodedUrl = encodeURIComponent(activityUrl);
     const encodedText = encodeURIComponent(shareText);
@@ -324,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <a class="share-button share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}" target="_blank" rel="noopener noreferrer" aria-label="Share ${name} on Facebook">
           Facebook
         </a>
-        <a class="share-button share-x" href="https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}" target="_blank" rel="noopener noreferrer" aria-label="Share ${name} on X">
+        <a class="share-button share-x" href="https://x.com/intent/post?text=${encodedText}&url=${encodedUrl}" target="_blank" rel="noopener noreferrer" aria-label="Share ${name} on X">
           X
         </a>
       </div>
@@ -525,7 +534,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
-    const shareLinks = buildShareLinks(name, details, formattedSchedule);
+    const activityAnchor = createActivityAnchor(name);
+    activityCard.id = activityAnchor;
+    const shareLinks = buildShareLinks(
+      name,
+      details,
+      formattedSchedule,
+      activityAnchor
+    );
 
     // Create activity tag
     const tagHtml = `
