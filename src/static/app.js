@@ -304,6 +304,33 @@ document.addEventListener("DOMContentLoaded", () => {
     return details.schedule;
   }
 
+  function buildShareLinks(name, details, formattedSchedule) {
+    const baseUrl = `${window.location.origin}${window.location.pathname}`;
+    const activityUrl = `${baseUrl}#${encodeURIComponent(name)}`;
+    const shareText = `${name} at Mergington High School: ${details.description} (${formattedSchedule})`;
+    const encodedUrl = encodeURIComponent(activityUrl);
+    const encodedText = encodeURIComponent(shareText);
+    const emailSubject = encodeURIComponent(`Check out ${name}`);
+    const emailBody = encodeURIComponent(
+      `${shareText}\n\nView details: ${activityUrl}`
+    );
+
+    return `
+      <div class="share-buttons">
+        <span class="share-label">Share:</span>
+        <a class="share-button share-email" href="mailto:?subject=${emailSubject}&body=${emailBody}" aria-label="Share ${name} via email">
+          Email
+        </a>
+        <a class="share-button share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}" target="_blank" rel="noopener noreferrer" aria-label="Share ${name} on Facebook">
+          Facebook
+        </a>
+        <a class="share-button share-x" href="https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}" target="_blank" rel="noopener noreferrer" aria-label="Share ${name} on X">
+          X
+        </a>
+      </div>
+    `;
+  }
+
   // Function to determine activity type (this would ideally come from backend)
   function getActivityType(activityName, description) {
     const name = activityName.toLowerCase();
@@ -498,6 +525,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
+    const shareLinks = buildShareLinks(name, details, formattedSchedule);
 
     // Create activity tag
     const tagHtml = `
@@ -528,6 +556,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="tooltip-text">Regular meetings at this time throughout the semester</span>
       </p>
       ${capacityIndicator}
+      ${shareLinks}
       <div class="participants-list">
         <h5>Current Participants:</h5>
         <ul>
