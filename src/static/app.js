@@ -313,7 +313,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
-    if (slug) {
+    if (slug.length > 0) {
       return slug;
     }
 
@@ -331,7 +331,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const activityUrl = `${baseUrl}#${activityAnchor}`;
     const shareText = `${name} at ${schoolName}: ${details.description} (${formattedSchedule})`;
     const encodedUrl = encodeURIComponent(activityUrl);
-    const encodedXText = encodeURIComponent(`${shareText} ${activityUrl}`);
+    const encodedXText = encodeURIComponent(`${shareText} - ${activityUrl}`);
     const emailSubject = encodeURIComponent(`Check out ${name}`);
     const emailBody = encodeURIComponent(
       `${shareText}\n\nView details: ${activityUrl}`
