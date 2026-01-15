@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     community: { label: "Community", color: "#fff3e0", textColor: "#e65100" },
     technology: { label: "Technology", color: "#e8eaf6", textColor: "#3949ab" },
   };
+  const schoolName = "Mergington High School";
 
   // State for activities and filters
   let allActivities = {};
@@ -305,18 +306,26 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function createActivityAnchor(name) {
-    const slug = name
+    const trimmedName = name.trim();
+    const slug = trimmedName
       .toLowerCase()
-      .trim()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
-    return slug || encodeURIComponent(name.trim());
+    if (slug) {
+      return slug;
+    }
+
+    let hash = 0;
+    for (const char of trimmedName) {
+      hash = (hash + char.charCodeAt(0)) % 100000;
+    }
+    return `activity-${hash}`;
   }
 
   function buildShareLinks(name, details, formattedSchedule, activityAnchor) {
     const baseUrl = `${window.location.origin}${window.location.pathname}`;
     const activityUrl = `${baseUrl}#${activityAnchor}`;
-    const shareText = `${name} at Mergington High School: ${details.description} (${formattedSchedule})`;
+    const shareText = `${name} at ${schoolName}: ${details.description} (${formattedSchedule})`;
     const encodedUrl = encodeURIComponent(activityUrl);
     const encodedText = encodeURIComponent(shareText);
     const emailSubject = encodeURIComponent(`Check out ${name}`);
@@ -327,13 +336,13 @@ document.addEventListener("DOMContentLoaded", () => {
     return `
       <div class="share-buttons">
         <span class="share-label">Share:</span>
-        <a class="share-button share-email" href="mailto:?subject=${emailSubject}&body=${emailBody}" aria-label="Share ${name} via email">
+        <a class="share-button share-email" href="mailto:?subject=${emailSubject}&body=${emailBody}" aria-label="Share activity via email">
           Email
         </a>
-        <a class="share-button share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}" target="_blank" rel="noopener noreferrer" aria-label="Share ${name} on Facebook">
+        <a class="share-button share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}" target="_blank" rel="noopener noreferrer" aria-label="Share activity on Facebook">
           Facebook
         </a>
-        <a class="share-button share-x" href="https://x.com/intent/post?text=${encodedText}&url=${encodedUrl}" target="_blank" rel="noopener noreferrer" aria-label="Share ${name} on X">
+        <a class="share-button share-x" href="https://x.com/intent/post?text=${encodedText}&url=${encodedUrl}" target="_blank" rel="noopener noreferrer" aria-label="Share activity on X">
           X
         </a>
       </div>
